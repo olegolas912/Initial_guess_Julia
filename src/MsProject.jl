@@ -1,5 +1,11 @@
 module MsProject
+__precompile__(false)
 
-greet() = print("Hello World!")
+include("simulator_patch.jl")
+using .JutulMiniStepPatch
 
-end # module MsProject
+using Jutul, JutulDarcy
+using GLMakie, DelimitedFiles, HYPRE
+
+
+end
