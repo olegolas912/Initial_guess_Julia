@@ -1,4 +1,4 @@
-# MsProject - Enhanced Reservoir Simulation with Jutul
+# Acceleration of convergence for conventional numerical schemes in reservoir modelling
 
 This project implements advanced state estimation techniques for reservoir simulation using the [Jutul](https://github.com/sintefmath/Jutul.jl) framework. The implementation focuses on improving convergence and performance through various initial guess strategies for nonlinear iterations.
 
