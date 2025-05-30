@@ -1,5 +1,3 @@
-![output](https://github.com/user-attachments/assets/d84baf60-71bb-4efd-b7f4-be0960f9205e)# Acceleration of convergence for conventional numerical schemes in reservoir modelling
-
 This project implements advanced state estimation techniques for reservoir simulation using the [JutulDarcy](https://github.com/sintefmath/JutulDarcy.jl) framework. The implementation focuses on improving convergence and performance through various initial guess strategies for nonlinear iterations.
 
 ## Features
@@ -82,6 +80,15 @@ x_{n+1} = x_n + (x_n - x_{n-1})
 
 ## Results
 ![output](https://github.com/user-attachments/assets/cdce92ff-0173-4226-a58f-df8181048bd4)
+| Method                     | Simulation time (s) | Newton iterations | Notes            |
+| -------------------------- | ------------------: | ----------------: | :--------------- |
+| Original                   |               38.60 |               426 | –                |
+| Linear regression          |               30.11 |               366 | –                |
+| First-order difference     |               28.97 |               361 | –                |
+| Weighted moving average    |               35.49 |               467 | –                |
+| Aitken’s Δ² acceleration   |               26.49 |               411 | did not converge |
+| Broyden-style quasi-Newton |               28.96 |               360 | best performance |
+
 
 ## Extensions
 
