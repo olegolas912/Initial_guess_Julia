@@ -6,25 +6,25 @@ This project implements advanced state estimation techniques for reservoir simul
 
 - Multiple state estimation strategies:
   - Linear combination of previous states
-  - Aitken's Δ² acceleration
-  - Broyden-style quasi-Newton method
   - Simple Moving Average (SMA)
   - Linear regression based weighting
+  - Aitken's Δ² acceleration
+  - Broyden-style quasi-Newton method
 
 ## Project Structure
 
 ```
 MsProject/
 ├── src/
-│   ├── MsProject.jl           # Main module file
+│   ├── MsProject.jl             # Main module file
 │   ├── simulator_linear_comb.jl # Implementation of state estimation methods
-│   └── simulator_test.jl      # Testing module
+│   └── simulator_test.jl        # Testing module
 ├── demo/
-│   ├── egg_new.jl            # Demo using the Egg model
-│   └── egg_orig.jl           # Original implementation for comparison
-├── Project.toml              # Project dependencies
-├── Manifest.toml             # Locked dependencies
-└── setup_env.jl             # Environment setup script
+│   ├── egg_new.jl               # Demo using the Egg model
+│   └── egg_orig.jl              # Original implementation for comparison
+├── Project.toml                 # Project dependencies
+├── Manifest.toml                # Locked dependencies
+└── setup_env.jl                 # Environment setup script
 ```
 
 ## Dependencies
@@ -40,7 +40,7 @@ The project requires the following Julia packages:
 ## Setup
 
 1. Clone the repository
-2. Run the setup script to configure the environment:
+2. Run the setup_env.jl script to configure the environment:
 ```julia
 include("setup_env.jl")
 ```
