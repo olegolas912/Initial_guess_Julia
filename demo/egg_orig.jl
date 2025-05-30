@@ -10,9 +10,8 @@ Pkg.instantiate()
 
 using Jutul, JutulDarcy
 
-egg_dir = JutulDarcy.GeoEnergyIO.test_input_file_path("EGG")
-case = setup_case_from_data_file(joinpath(egg_dir, "EGG.DATA"))
+case = setup_case_from_data_file(joinpath("D:\\DeepField\\open_data\\egg", "Egg_Model_ECL.DATA"))
 
-@time ws, states = simulate_reservoir(case; output_substates=true)
+@time ws, states = simulate_reservoir(case, timesteps=:none, output_substates=true, cutting_criterion=nothing)
 
 println("\n✓ Расчёт завершён.  Доступны переменные `ws`, `states`.")
