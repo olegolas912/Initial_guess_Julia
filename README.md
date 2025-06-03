@@ -12,7 +12,7 @@ This project implements advanced state estimation techniques for reservoir simul
 ## Project Structure
 
 ```
-MsProject/
+Initial_guess_Julia/
 ├── src/
 │   ├── MsProject.jl             # Main module file
 │   ├── simulator_linear_comb.jl # Implementation of state estimation methods
