@@ -79,12 +79,11 @@ x_{n+1} = x_n + (x_n - x_{n-1})
 ```
 
 ## Results
-![output](https://github.com/user-attachments/assets/cdce92ff-0173-4226-a58f-df8181048bd4)
+![output (1)](https://github.com/user-attachments/assets/850dbbcf-5a3b-414c-8eda-57183ec14552)
 | Method                     | Simulation time (s) | Newton iterations | Notes            |
 | -------------------------- | ------------------: | ----------------: | :--------------- |
 | Original                   |               38.60 |               426 | –                |
 | Linear regression          |               30.11 |               366 | –                |
-| First-order difference     |               28.97 |               361 | –                |
 | Weighted moving average    |               35.49 |               467 | –                |
 | Aitken’s Δ² acceleration   |               26.49 |               411 | did not converge |
 | Broyden-style quasi-Newton |               28.96 |               360 | best performance |
