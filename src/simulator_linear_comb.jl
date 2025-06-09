@@ -96,40 +96,23 @@ function aitken_initial_guess(hist::Vector{Dict{Symbol,Any}})
     return out
 end
 
-
-# 5. “Broyden‐style” quasi‐Newton guess (here: secant‐step approximation)
-function broyden_initial_guess(hist::Vector{Dict{Symbol,Any}})
-    s1, s2, s3 = hist
-    out = Dict{Symbol,Any}()
-
-    for mdl in keys(s3)
-        sub3 = s3[mdl]
-        if !(sub3 isa Dict)
-            out[mdl] = sub3
-            continue
-        end
-
-        sub_out = Dict{Symbol,Any}()
-        for v in keys(sub3)
-            x1 = s1[mdl][v]
-            x2 = s2[mdl][v]
-            x3 = s3[mdl][v]
-
-            if is_numeric(x1)
-                # add the simple increment from the last step
-                sub_out[v] = x3 .+ (x3 .- x2)
-            else
-                sub_out[v] = x3
+function numeric_snapshot(state)
+    snap = Dict{Symbol,Any}()
+    for (mdl, sub) in state
+        if sub isa Dict
+            sd = Dict{Symbol,Any}()
+            for (k, v) in sub
+                if v isa Number
+                    sd[k] = v
+                elseif v isa AbstractArray{<:Number}
+                    sd[k] = copy(v)          # shallow-copy массива
+                end
             end
+            sd !== Dict() && (snap[mdl] = sd)
         end
-
-        out[mdl] = sub_out
     end
-
-    return out
+    return snap
 end
-
-
 
 function simulator_storage(model;
     state0=nothing,
@@ -197,20 +180,20 @@ function solve_ministep(sim, dt, forces, max_iter, cfg;
             update_explicit=update_explicit)
     end
 
-    # --------------------------------------------------------
+    # ─────────────────────────────────────────────────────────────────────
     if length(hist) == MAX_MINISTEP_HISTORY
         # w_lr = [-0.5, 0.0, 1.5] 
         # guess_state = nested_state_combination(hist, w_lr)
 
-        # w_diff = [0.0, -1.0, 2.0]
-        # guess_state = nested_state_combination(hist, w_diff)
+        w_diff = [0.0, -1.0, 2.0] #broyden (best)
+        guess_state = nested_state_combination(hist, w_diff)
 
         # w_sma = [0.1, 0.3, 0.6]
         # guess_state = nested_state_combination(hist, w_sma)
 
         # guess_state = aitken_initial_guess(hist)
 
-        guess_state = broyden_initial_guess(hist)
+        # guess_state = broyden_initial_guess(hist)
 
 
         last_state = hist[end]
@@ -218,13 +201,13 @@ function solve_ministep(sim, dt, forces, max_iter, cfg;
         if haskey(last_state, key)
             Δ = norm(guess_state[key] .- last_state[key]) /
                 (norm(last_state[key]) + eps())
-            @info "*** Initial-guess Δ($key) = $(round(Δ, sigdigits = 4))"
+            # @info "*** Initial-guess Δ($key) = $(round(Δ, sigdigits = 4))"
         end
 
         reset_variables!(sim, guess_state; type=:state)
         update_secondary_variables!(stor, sim.model)
     end
-
+    # ─────────────────────────────────────────────────────────────────────
     step_report = missing
     for it = 1:(max_iter+1)
         do_solve = it <= max_iter
@@ -273,6 +256,7 @@ function solve_ministep(sim, dt, forces, max_iter, cfg;
     # --- ----------------------------------------------------
     if report[:success]
         push!(hist, deepcopy(get_output_state(stor, sim.model)))
+        # push!(hist, numeric_snapshot(get_output_state(stor, sim.model)))
         if length(hist) > MAX_MINISTEP_HISTORY
             popfirst!(hist)
         end
