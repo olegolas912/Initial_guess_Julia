@@ -260,7 +260,7 @@ function solve_ministep(sim, dt, forces, max_iter, cfg;
         if length(hist) > MAX_MINISTEP_HISTORY
             popfirst!(hist)
         end
-        # @info "*** Ministate buffer size = $(length(hist))"
+        @info "*** Ministate buffer size = $(length(hist))"
     end
     # ---------------------------------------------------------------------
 
