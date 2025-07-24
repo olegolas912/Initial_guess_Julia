@@ -7,8 +7,8 @@ pkg_path = raw"D:\julia-1.11.5\JuliaDepot\dev"
 Pkg.develop(path=joinpath(pkg_path, "Jutul"))
 Pkg.develop(path=joinpath(pkg_path, "JutulDarcy"))
 Pkg.instantiate()
-Pkg.add("GLMakie")
-Pkg.add("JLD2")
+# Pkg.add("GLMakie")
+# Pkg.add("JLD2")
 
 using Jutul, JutulDarcy, GLMakie
 
@@ -23,14 +23,13 @@ tsteps(n, first) = begin
 end
 tsteps(2, 400)
 
-
+day = si_unit(:day)
 case = setup_case_from_data_file(joinpath("D:\\convergance_tests\\orig-Copy", "Egg_Model_ECL.DATA"))
 # @time result = simulate_reservoir(case, timesteps=:none, output_substates=true, cutting_criterion=nothing)
-day = si_unit(:day)
-@time result = simulate_reservoir(case, info_level=2, output_path="D:\\convergance_tests\\orig-Copy\\!logs",
+@time result = simulate_reservoir(case, info_level=0, output_path="D:\\convergance_tests\\orig-Copy\\!logs",
     timesteps=:none, max_nonlinear_iterations=15,
     timestep_max_increase=100.0, timestep_max_decrease=0.01, max_timestep=315360000, min_timestep=1.0e-6,
-    initial_dt=55day)
+    initial_dt=365day)
 
 for f in filter(x -> endswith(x, ".jld2"), readdir("D:/convergance_tests/orig-Copy/!logs"; join=true))
     println("\nФайл ", f)
