@@ -14,7 +14,7 @@ Pkg.add("JutulDarcy")
 Pkg.add("GLMakie")
 Pkg.add("JLD2")
 
-using Jutul, JutulDarcy, GLMakie
+using Jutul, JutulDarcy
 
 include(joinpath(@__DIR__, "generate_tstep.jl"))
 using .GenerateTSTEP
@@ -46,14 +46,13 @@ end
 
 function simulation(data_file;
                     info_level               = 0,
-                    timesteps                = :auto,
+                    timesteps                = :none,
                     max_nonlinear_iterations = 15,
                     timestep_max_increase    = 100.0,
                     timestep_max_decrease    = 0.01,
                     max_timestep             = 315_360_000,
                     min_timestep             = 1.0e-6,
-                    initial_dt               = 365day)
-
+                    initial_dt               = 50*si_unit(:day))
     logs_dir = joinpath(dirname(data_file), "!logs")
     isdir(logs_dir) || mkpath(logs_dir)
 
@@ -84,4 +83,4 @@ function simulation(data_file;
     return nothing                              # ничего не печатается после TSTEP
 end
 
-simulation(raw"D:\t_nav_models\egg\Egg_Model_ECL.DATA")
+simulation(raw"D:\convergance_tests\edge_cases\run_001\Egg_Model_ECL.DATA")

@@ -6,18 +6,19 @@ using Pkg
 # Pkg.add("JutulDarcy")
 # Pkg.add("GLMakie")
 # Pkg.add("JLD2")
-Pkg.add("CSV")
-Pkg.add("DataFrames")
+# Pkg.add("CSV")
+# Pkg.add("DataFrames")
 
 
-using Jutul, JutulDarcy, GLMakie
+using Jutul, JutulDarcy
 using JLD2, CSV, DataFrames
 import Printf: @printf
 
-const ROOT = raw"D:\convergance_tests\cases_32"            # где лежат run_*
+const ROOT = raw"D:\convergance_tests\edge_cases"            # где лежат run_*
 const OUT_CSV = joinpath(ROOT, "tstep_summary.csv")        # итоговый файл
-const INITIAL_DTS = 35:1:38                              # диапазон первых шагов, сут
+const INITIAL_DTS = 40:5:70                              # диапазон первых шагов, сут
 const N_MINISTEP_COLS = 30                                 # макс. столбцов под мини-шаги
+day = si_unit(:day)
 
 # ---------- ф-ция: разобрать первый лог и вернуть вектор Δt (сут) ----------
 function read_ministeps(log_dir::String)
@@ -71,7 +72,7 @@ for rd in run_dirs
     mkpath(logs_dir)
 
     for dt_first in INITIAL_DTS
-        idx += 1
+        global idx += 1
         @printf "[%4d / %4d]  %-15s  initial_dt = %3d day(s) ... " idx total_runs basename(rd) dt_first
         # чистим логи, если остались
         for f in readdir(logs_dir; join=true)
