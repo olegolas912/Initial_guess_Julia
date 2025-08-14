@@ -1,0 +1,7 @@
+DATES
+	15 JUN 2012 /
+/
+WCONPROD
+    'PROD2' 'OPEN' 'BHP' 1* 4*  395 /
+/
+

@@ -14,10 +14,11 @@ using Jutul, JutulDarcy
 using JLD2, CSV, DataFrames
 import Printf: @printf
 
-const ROOT = raw"D:\convergance_tests\edge_cases"            # где лежат run_*
+const ROOT = raw"D:\convergance_tests\edge_cases_permeability"            # где лежат run_*
 const OUT_CSV = joinpath(ROOT, "tstep_summary.csv")        # итоговый файл
 const INITIAL_DTS = 40:5:70                              # диапазон первых шагов, сут
 const N_MINISTEP_COLS = 30                                 # макс. столбцов под мини-шаги
+const RUN_RX = r"^run_\d{3}"
 day = si_unit(:day)
 
 # ---------- ф-ция: разобрать первый лог и вернуть вектор Δt (сут) ----------
@@ -61,8 +62,10 @@ open(OUT_CSV, "w") do io
 end
 
 # ---------- основной двойной цикл ----------
-run_dirs = sort(filter(d -> isdir(d) && occursin(r"run_\d{3}$", d),
-                       joinpath.(ROOT, readdir(ROOT))))
+run_dirs = filter(d ->
+    isdir(d) && occursin(RUN_RX, basename(d)),
+    readdir(ROOT; join=true, sort=true)
+)
 total_runs = length(run_dirs) * length(INITIAL_DTS)
 idx = 0
 

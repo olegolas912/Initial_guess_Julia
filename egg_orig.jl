@@ -28,7 +28,7 @@ end
 tsteps(2, 400)
 
 day = si_unit(:day)
-case = setup_case_from_data_file(joinpath("D:\\t_nav_models\\egg", "Egg_Model_ECL.DATA"))
+case = setup_case_from_data_file(joinpath("D:\\MsProject", "Egg_Model_ECL.DATA"))
 # @time result = simulate_reservoir(case, timesteps=:none, output_substates=true, cutting_criterion=nothing)
 @time result = simulate_reservoir(case, info_level=0, output_path="D:\\t_nav_models\\egg\\!logs",
     timesteps=:none, max_nonlinear_iterations=15,
@@ -52,7 +52,7 @@ function simulation(data_file;
                     timestep_max_decrease    = 0.01,
                     max_timestep             = 315_360_000,
                     min_timestep             = 1.0e-6,
-                    initial_dt               = 50*si_unit(:day))
+                    initial_dt               = 55*si_unit(:day))
     logs_dir = joinpath(dirname(data_file), "!logs")
     isdir(logs_dir) || mkpath(logs_dir)
 
@@ -83,4 +83,4 @@ function simulation(data_file;
     return nothing                              # ничего не печатается после TSTEP
 end
 
-simulation(raw"D:\convergance_tests\edge_cases\run_001\Egg_Model_ECL.DATA")
+simulation(raw"D:\\convergance_tests\\bhp_check_one_year\\BHP_390\\Egg_Model_ECL.DATA")
