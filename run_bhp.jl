@@ -1,6 +1,8 @@
 # ============================================================
 # run_bhp_tstep_all_logs.jl
-# Запускает все кейсы BHP_* и пишет разбиение ВСЕХ шагов в CSV
+# Запускает все кейсы QINJ_* по возрастанию номера и
+# внутри каждого — файлы *_TSTEP_a_b.DATA по (a,b) ↑
+# Пишет разбиение ВСЕХ шагов в CSV
 # ============================================================
 using Pkg
 env = joinpath(@__DIR__, "original_env")
@@ -15,11 +17,11 @@ using Jutul, JutulDarcy
 using JLD2, Printf
 
 # -------------------- настройки --------------------
-const ROOT = raw"D:\convergance_tests\cases_bhp_one_year"     # ← корень с папками BHP_***
-const OUT_CSV = joinpath(ROOT, "tstep_all_logs.csv") # итоговый CSV
-const RUN_RX = r"^BHP_\d{3}$"
-const DATA_RX = r"_TSTEP_(\d+)_(\d+)\.DATA$"         # извлекаем a и b
-const N_MINISTEP_COLS = 15                           # макс. столбцов с мини-шагами
+const ROOT = raw"D:\convergance_tests\inj_check_two_years"     # ← корень с папками QINJ_***
+const OUT_CSV = joinpath(ROOT, "tstep_all_logs.csv")          # итоговый CSV
+const RUN_RX  = r"^QINJ_(\d{3})$"
+const DATA_RX = r"_TSTEP_(\d+)_(\d+)\.DATA$"                  # извлекаем a и b
+const N_MINISTEP_COLS = 15                                    # макс. столбцов с мини-шагами
 day = si_unit(:day)
 
 # -------------------- утилиты ----------------------
@@ -39,7 +41,8 @@ end
 function list_log_files(logs_dir::AbstractString)
     # "jutul_1.jld2", "jutul_2.jld2", ...
     files = filter(f -> endswith(f, ".jld2"), readdir(logs_dir; join=true))
-    sort(files; by = f -> tryparse(Int, match(r"jutul_(\d+)\.jld2$", basename(f)).captures[1]))
+    sort!(files; by = f -> parse(Int, match(r"jutul_(\d+)\.jld2$", basename(f)).captures[1]))
+    return files
 end
 
 # -------------------- CSV заголовок ----------------
@@ -49,16 +52,24 @@ open(OUT_CSV, "w") do io
     println(io, join(col_names, ','))
 end
 
-# -------------------- основной цикл ----------------
+# -------------------- сбор и сортировка кейсов -----
+# Берём папки QINJ_*** и сортируем по числу ↑
 run_dirs = filter(d -> isdir(d) && occursin(RUN_RX, basename(d)),
-                  readdir(ROOT; join=true, sort=true))
+                  readdir(ROOT; join=true, sort=false))
+sort!(run_dirs; by = d -> parse(Int, match(RUN_RX, basename(d)).captures[1]))
 
+# -------------------- основной цикл ----------------
 for rd in run_dirs
+    # Собираем файлы *_TSTEP_a_b.DATA и сортируем по (a,b) ↑
     data_files = filter(f -> isfile(f) && occursin(DATA_RX, basename(f)),
-                        readdir(rd; join=true, sort=true))
+                        readdir(rd; join=true, sort=false))
+    sort!(data_files; by = f -> begin
+        m = match(DATA_RX, basename(f))::RegexMatch
+        (parse(Int, m.captures[1]), parse(Int, m.captures[2]))
+    end)
 
     for data_path in data_files
-        m = match(DATA_RX, basename(data_path))
+        m = match(DATA_RX, basename(data_path))::RegexMatch
         a = parse(Int, m.captures[1]); b = parse(Int, m.captures[2])
 
         logs_dir = joinpath(rd, "!logs")
@@ -83,9 +94,9 @@ for rd in run_dirs
                 timesteps                = :none,          # адаптивный шаг
                 initial_dt               = a*day,          # стартуем с первого шага из файла
                 max_nonlinear_iterations = 15,
-                timestep_max_increase    = 100.0,
-                timestep_max_decrease    = 0.01,
-                max_timestep             = 365day*5,
+                timestep_max_increase    = 10000.0,
+                timestep_max_decrease    = 0.0001,
+                max_timestep             = 365day*10,
                 min_timestep             = 1e-6
             )
         catch err

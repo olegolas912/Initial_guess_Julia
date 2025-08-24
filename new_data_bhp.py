@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 make_bhp_case_set.py
 --------------------
@@ -99,9 +98,9 @@ def main() -> None:
         "--prefix", "-p", default="BHP", help="префикс папок и schedule‑файлов"
     )
     # Диапазон BHP по умолчанию: 390..399 с шагом 1
-    ap.add_argument("--start", type=int, default=390)
-    ap.add_argument("--stop",  type=int, default=399)
-    ap.add_argument("--step",  type=int, default=1)
+    ap.add_argument("--start", type=int, default=300)
+    ap.add_argument("--stop",  type=int, default=390)
+    ap.add_argument("--step",  type=int, default=10)
     args = ap.parse_args()
 
     base_data = args.data.resolve()
